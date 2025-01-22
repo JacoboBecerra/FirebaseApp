@@ -29,8 +29,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void registerUser() {
         String fullName = ((EditText) findViewById(R.id.nombreCompleto)).getText().toString().trim();
-        String email = ((EditText) findViewById(R.id.emailEditText)).getText().toString().trim();
-        String password = ((EditText) findViewById(R.id.passwordEditText)).getText().toString().trim();
+        String email = ((EditText) findViewById(R.id.editEmail)).getText().toString().trim();
+        String password = ((EditText) findViewById(R.id.editPassword)).getText().toString().trim();
         String confirmPassword = ((EditText) findViewById(R.id.confirmPassword)).getText().toString().trim();
         String phone = ((EditText) findViewById(R.id.telefono)).getText().toString().trim();
         String address = ((EditText) findViewById(R.id.direcion)).getText().toString().trim();
