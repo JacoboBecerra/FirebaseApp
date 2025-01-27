@@ -6,55 +6,47 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myfirebaseapp.R;
-import com.google.firebase.auth.FirebaseAuth;
-
+import com.example.myfirebaseapp.viewmodels.LoginViewModel;
 
 public class LoginActivity extends AppCompatActivity {
-    private FirebaseAuth mAuth;
+    private LoginViewModel loginViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mAuth = FirebaseAuth.getInstance();
+        loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
 
-        findViewById(R.id.loginButton).setOnClickListener(v -> loginUser());
-        findViewById(R.id.registerButton).setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-            startActivity(intent);
+        EditText emailEditText = findViewById(R.id.emailEditText);
+        EditText passwordEditText = findViewById(R.id.passwordEditText);
+
+        findViewById(R.id.loginButton).setOnClickListener(v -> {
+            String email = emailEditText.getText().toString();
+            String password = passwordEditText.getText().toString();
+
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(LoginActivity.this, "Por favor, ingrese un correo y una contraseña.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            loginViewModel.loginUser(email, password);
+        });
+
+        // Observar el estado de inicio de sesión
+        loginViewModel.getLoginStatus().observe(this, isSuccess -> {
+            if (isSuccess) {
+                Toast.makeText(LoginActivity.this, "Inicio de sesión exitoso.", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            } else {
+                Toast.makeText(LoginActivity.this, "Error en el inicio de sesión.", Toast.LENGTH_SHORT).show();
+            }
         });
     }
-
-    private void loginUser() {
-        String email = ((EditText) findViewById(R.id.emailEditText)).getText().toString();
-        String password = ((EditText) findViewById(R.id.passwordEditText)).getText().toString();
-
-        // Validar si los campos están vacíos
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(LoginActivity.this, "Por favor, ingrese un correo y una contraseña.", Toast.LENGTH_SHORT).show();
-            return; // No continuar si los campos están vacíos
-        }
-
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(LoginActivity.this, "Inicio de sesión exitoso.", Toast.LENGTH_SHORT).show();
-
-                        // Redirige a DashboardActivity
-                        Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        finish(); // Finaliza la LoginActivity para evitar que el usuario regrese aquí al presionar "Atrás"
-                    } else {
-                        Toast.makeText(LoginActivity.this, "Error en autenticación.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
 }
-
-
-
