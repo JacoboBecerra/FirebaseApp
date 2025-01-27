@@ -1,97 +1,67 @@
 package com.example.myfirebaseapp.views;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myfirebaseapp.R;
+import com.example.myfirebaseapp.adapters.RecipeAdapter;
+import com.example.myfirebaseapp.models.Recipe;
+import com.example.myfirebaseapp.viewmodels.DashboardViewModel;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
 
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;  // Biblioteca para cargar imágenes desde URL
+import java.util.List;
 
 public class DashboardActivity extends AppCompatActivity {
-    private FirebaseAuth mAuth;
-    private DatabaseReference mDatabase;
 
-    private TextView titleTextView;
-    private TextView descriptionTextView;
-    private ImageView itemImageView;
-    private Button logoutButton;
+    private RecyclerView recyclerView;
+    private RecipeAdapter adapter;
+    private DashboardViewModel dashboardViewModel;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
-        // Inicializar Firebase
+        // Inicializar RecyclerView
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Inicializar ViewModel
+        dashboardViewModel = new ViewModelProvider(this).get(DashboardViewModel.class);
+
+        // Inicializar FirebaseAuth
         mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        // Vincular las vistas
-        titleTextView = findViewById(R.id.titleTextView);
-        descriptionTextView = findViewById(R.id.descriptionTextView);
-        itemImageView = findViewById(R.id.itemImageView);
-        logoutButton = findViewById(R.id.logoutButton);
-
-        // Obtener los datos de Firebase (este es un ejemplo con datos ficticios)
-        loadDashboardData();
-
-        // Configurar el botón de Logout
-        logoutButton.setOnClickListener(v -> logout());
-    }
-
-    private void loadDashboardData() {
-        // Referencia al nodo "recetas/0" en la base de datos
-        DatabaseReference gameRef = mDatabase.child("recetas").child("0");
-
-        gameRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    // Obtener los datos del nodo
-                    String itemTitle = dataSnapshot.child("titulo").getValue(String.class);
-                    String itemDescription = dataSnapshot.child("descripcion").getValue(String.class);
-                    String imageUrl = dataSnapshot.child("imagen").getValue(String.class);
-
-                    // Asignar los datos a las vistas
-                    titleTextView.setText(itemTitle);
-                    descriptionTextView.setText(itemDescription);
-
-                    // Cargar la imagen usando Picasso
-                    if (imageUrl != null && !imageUrl.isEmpty()) {
-                        Picasso.get().load(imageUrl).into(itemImageView);
-                    } else {
-                        Toast.makeText(DashboardActivity.this, "URL de imagen no válida.", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(DashboardActivity.this, "No se encontraron datos.", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(DashboardActivity.this, "Error al cargar datos: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+        // Observar los cambios en la lista de recetas
+        dashboardViewModel.getRecipeList().observe(this, recipeList -> {
+            if (recipeList != null && !recipeList.isEmpty()) {
+                // Si hay recetas, actualiza el RecyclerView
+                adapter = new RecipeAdapter(recipeList);
+                recyclerView.setAdapter(adapter);
+            } else {
+                Toast.makeText(DashboardActivity.this, "No se encontraron recetas", Toast.LENGTH_SHORT).show();
             }
         });
-    }
 
+        // Configurar el botón de cerrar sesión
+        Button logoutButton = findViewById(R.id.logoutButton);
+        logoutButton.setOnClickListener(v -> {
+            // Cerrar sesión en Firebase
+            mAuth.signOut();
 
-    private void logout() {
-        // Cerrar sesión
-        mAuth.signOut();
-        // Redirigir al LoginActivity
-        Intent intent = new Intent(DashboardActivity.this, LoginActivity.class);
-        startActivity(intent);
-        finish(); // Cerrar DashboardActivity
+            // Redirigir a la LoginActivity
+            Intent intent = new Intent(DashboardActivity.this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); // Evitar que el usuario regrese al Dashboard
+            startActivity(intent);
+            finish(); // Finalizar la actividad actual para que no quede en la pila de actividades
+        });
     }
 }
