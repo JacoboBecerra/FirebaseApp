@@ -1,4 +1,4 @@
-package com.example.myfirebaseapp;
+package com.example.myfirebaseapp.views;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;

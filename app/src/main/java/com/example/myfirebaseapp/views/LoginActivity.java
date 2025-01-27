@@ -1,4 +1,4 @@
-package com.example.myfirebaseapp;
+package com.example.myfirebaseapp.views;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myfirebaseapp.R;
 import com.google.firebase.auth.FirebaseAuth;
 
 
