@@ -18,9 +18,12 @@ import java.util.List;
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder> {
 
     private List<Recipe> recipeList;
+    private OnRecipeClickListener onRecipeClickListener;
 
-    public RecipeAdapter(List<Recipe> recipeList) {
+    // Constructor para recibir el listado de recetas y el listener
+    public RecipeAdapter(List<Recipe> recipeList, OnRecipeClickListener onRecipeClickListener) {
         this.recipeList = recipeList;
+        this.onRecipeClickListener = onRecipeClickListener;
     }
 
     @NonNull
@@ -38,6 +41,13 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
         // Cargar la imagen usando Picasso
         Picasso.get().load(recipe.getImagen()).into(holder.recipeImageView);
+
+        // Manejar el clic
+        holder.itemView.setOnClickListener(v -> {
+            if (onRecipeClickListener != null) {
+                onRecipeClickListener.onRecipeClick(recipe); // Llamar al método del listener
+            }
+        });
     }
 
     @Override
@@ -57,5 +67,9 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             recipeImageView = itemView.findViewById(R.id.recipeImageView);
         }
     }
-}
 
+    // Interfaz para manejar clics
+    public interface OnRecipeClickListener {
+        void onRecipeClick(Recipe recipe); // Método que se llama cuando se hace clic en una receta
+    }
+}

@@ -1,6 +1,7 @@
 package com.example.myfirebaseapp.views;
 
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,6 +15,7 @@ public class DetailActivity extends AppCompatActivity {
     private TextView titleTextView;
     private TextView descriptionTextView;
     private ImageView imageView;
+    private Button backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +26,7 @@ public class DetailActivity extends AppCompatActivity {
         titleTextView = findViewById(R.id.detailTitleTextView);
         descriptionTextView = findViewById(R.id.detailDescriptionTextView);
         imageView = findViewById(R.id.detailImageView);
+        backButton = findViewById(R.id.backButton);
 
         // Obtener los datos del Intent que se pasó desde DashboardActivity
         String title = getIntent().getStringExtra("title");
@@ -41,7 +44,15 @@ public class DetailActivity extends AppCompatActivity {
             // Si no hay imagen, puedes usar una imagen por defecto
             imageView.setImageResource(R.drawable.ic_launcher_foreground);
         }
+
+        // Configurar el comportamiento del botón de retroceso
+        backButton.setOnClickListener(v -> onBackPressed());
+    }
+
+    // Método para manejar el clic del botón "Volver"
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();  // Finaliza esta actividad y regresa a la anterior (DashboardActivity)
     }
 }
-
-

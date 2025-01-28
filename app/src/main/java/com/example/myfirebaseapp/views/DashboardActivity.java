@@ -44,7 +44,7 @@ public class DashboardActivity extends AppCompatActivity {
         dashboardViewModel.getRecipeList().observe(this, recipeList -> {
             if (recipeList != null && !recipeList.isEmpty()) {
                 // Si hay recetas, actualiza el RecyclerView
-                adapter = new RecipeAdapter(recipeList);
+                adapter = new RecipeAdapter(recipeList, this::onRecipeClick);  // Pasamos el listener para clics
                 recyclerView.setAdapter(adapter);
             } else {
                 Toast.makeText(DashboardActivity.this, "No se encontraron recetas", Toast.LENGTH_SHORT).show();
@@ -63,5 +63,15 @@ public class DashboardActivity extends AppCompatActivity {
             startActivity(intent);
             finish(); // Finalizar la actividad actual para que no quede en la pila de actividades
         });
+    }
+
+    // Método para manejar el clic en una receta
+    private void onRecipeClick(Recipe recipe) {
+        // Crear el Intent para ir a DetailActivity
+        Intent intent = new Intent(DashboardActivity.this, DetailActivity.class);
+        intent.putExtra("title", recipe.getTitulo());
+        intent.putExtra("description", recipe.getDescripcion());
+        intent.putExtra("imageUrl", recipe.getImagen());
+        startActivity(intent);
     }
 }
