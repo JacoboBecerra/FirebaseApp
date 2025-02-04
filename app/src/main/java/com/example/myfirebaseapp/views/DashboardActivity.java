@@ -16,8 +16,6 @@ import com.example.myfirebaseapp.models.Recipe;
 import com.example.myfirebaseapp.viewmodels.DashboardViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.util.List;
-
 public class DashboardActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
@@ -43,8 +41,11 @@ public class DashboardActivity extends AppCompatActivity {
         // Observar los cambios en la lista de recetas
         dashboardViewModel.getRecipeList().observe(this, recipeList -> {
             if (recipeList != null && !recipeList.isEmpty()) {
-                // Si hay recetas, actualiza el RecyclerView
-                adapter = new RecipeAdapter(recipeList, this::onRecipeClick);  // Pasamos el listener para clics
+                adapter = new RecipeAdapter(
+                        recipeList,
+                        this::onRecipeClick,
+                        (recipe, isFavorite) -> dashboardViewModel.toggleFavorite(recipe, isFavorite)
+                );
                 recyclerView.setAdapter(adapter);
             } else {
                 Toast.makeText(DashboardActivity.this, "No se encontraron recetas", Toast.LENGTH_SHORT).show();
@@ -54,20 +55,15 @@ public class DashboardActivity extends AppCompatActivity {
         // Configurar el botón de cerrar sesión
         Button logoutButton = findViewById(R.id.logoutButton);
         logoutButton.setOnClickListener(v -> {
-            // Cerrar sesión en Firebase
             mAuth.signOut();
-
-            // Redirigir a la LoginActivity
             Intent intent = new Intent(DashboardActivity.this, LoginActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); // Evitar que el usuario regrese al Dashboard
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-            finish(); // Finalizar la actividad actual para que no quede en la pila de actividades
+            finish();
         });
     }
 
-    // Método para manejar el clic en una receta
     private void onRecipeClick(Recipe recipe) {
-        // Crear el Intent para ir a DetailActivity
         Intent intent = new Intent(DashboardActivity.this, DetailActivity.class);
         intent.putExtra("title", recipe.getTitulo());
         intent.putExtra("description", recipe.getDescripcion());

@@ -1,18 +1,22 @@
 package com.example.myfirebaseapp.models;
 
 public class Recipe {
-
     private String titulo;
     private String imagen;
     private String descripcion;
+    private String id;
+    private boolean isFavorite;
 
-    // Constructor vacío necesario para Firebase
-    public Recipe() {}
+    public Recipe() {
+        // Constructor vacío necesario para Firebase
+    }
 
-    public Recipe(String titulo, String imagen, String descripcion) {
+    public Recipe(String id, String titulo, String imagen, String descripcion) {
+        this.id = id;
         this.titulo = titulo;
         this.imagen = imagen;
         this.descripcion = descripcion;
+        this.isFavorite = false;
     }
 
     public String getTitulo() {
@@ -37,5 +41,21 @@ public class Recipe {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
     }
 }

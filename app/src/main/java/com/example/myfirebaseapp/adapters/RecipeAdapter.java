@@ -19,11 +19,21 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
     private List<Recipe> recipeList;
     private OnRecipeClickListener onRecipeClickListener;
+    private OnFavoriteClickListener onFavoriteClickListener;
 
-    // Constructor para recibir el listado de recetas y el listener
-    public RecipeAdapter(List<Recipe> recipeList, OnRecipeClickListener onRecipeClickListener) {
+    public interface OnRecipeClickListener {
+        void onRecipeClick(Recipe recipe);
+    }
+
+    public interface OnFavoriteClickListener {
+        void onFavoriteClick(Recipe recipe, boolean isFavorite);
+    }
+
+    public RecipeAdapter(List<Recipe> recipeList, OnRecipeClickListener onRecipeClickListener,
+                         OnFavoriteClickListener onFavoriteClickListener) {
         this.recipeList = recipeList;
         this.onRecipeClickListener = onRecipeClickListener;
+        this.onFavoriteClickListener = onFavoriteClickListener;
     }
 
     @NonNull
@@ -36,16 +46,34 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     @Override
     public void onBindViewHolder(@NonNull RecipeViewHolder holder, int position) {
         Recipe recipe = recipeList.get(position);
+
         holder.titleTextView.setText(recipe.getTitulo());
         holder.descriptionTextView.setText(recipe.getDescripcion());
 
-        // Cargar la imagen usando Picasso
+        // Cargar la imagen de la receta
         Picasso.get().load(recipe.getImagen()).into(holder.recipeImageView);
 
-        // Manejar el clic
+        // Configurar el icono de favorito
+        holder.favoriteImageView.setImageResource(
+                recipe.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_favorite_border
+        );
+
+        // Click listener para el icono de favorito
+        holder.favoriteImageView.setOnClickListener(v -> {
+            boolean newFavoriteStatus = !recipe.isFavorite();
+            recipe.setFavorite(newFavoriteStatus);
+            holder.favoriteImageView.setImageResource(
+                    newFavoriteStatus ? R.drawable.ic_favorite : R.drawable.ic_favorite_border
+            );
+            if (onFavoriteClickListener != null) {
+                onFavoriteClickListener.onFavoriteClick(recipe, newFavoriteStatus);
+            }
+        });
+
+        // Click listener para el item completo
         holder.itemView.setOnClickListener(v -> {
             if (onRecipeClickListener != null) {
-                onRecipeClickListener.onRecipeClick(recipe); // Llamar al método del listener
+                onRecipeClickListener.onRecipeClick(recipe);
             }
         });
     }
@@ -56,20 +84,15 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     }
 
     public class RecipeViewHolder extends RecyclerView.ViewHolder {
-
         TextView titleTextView, descriptionTextView;
-        ImageView recipeImageView;
+        ImageView recipeImageView, favoriteImageView;
 
         public RecipeViewHolder(View itemView) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.recipeTitleTextView);
             descriptionTextView = itemView.findViewById(R.id.recipeDescriptionTextView);
             recipeImageView = itemView.findViewById(R.id.recipeImageView);
+            favoriteImageView = itemView.findViewById(R.id.favoriteImageView);
         }
-    }
-
-    // Interfaz para manejar clics
-    public interface OnRecipeClickListener {
-        void onRecipeClick(Recipe recipe); // Método que se llama cuando se hace clic en una receta
     }
 }

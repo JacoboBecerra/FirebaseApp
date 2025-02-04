@@ -19,15 +19,33 @@
             android:scaleType="centerCrop"
             android:layout_marginBottom="8dp"/>
 
-        <!-- Título de la receta -->
-        <TextView
-            android:id="@+id/recipeTitleTextView"
+        <!-- Contenedor para título y favorito -->
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Título de la receta"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp"/>
+            android:layout_marginBottom="4dp">
+
+            <!-- Título de la receta -->
+            <TextView
+                android:id="@+id/recipeTitleTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/favoriteImageView"
+                android:text="Título de la receta"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+            <!-- Icono de favorito -->
+            <ImageView
+                android:id="@+id/favoriteImageView"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_favorite_border"
+                android:padding="2dp"/>
+
+        </RelativeLayout>
 
         <!-- Descripción de la receta -->
         <TextView
