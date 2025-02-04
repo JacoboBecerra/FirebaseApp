@@ -1,5 +1,7 @@
 package com.example.myfirebaseapp.models;
 
+import java.util.Objects;
+
 public class Recipe {
     private String titulo;
     private String imagen;
@@ -57,5 +59,21 @@ public class Recipe {
 
     public void setFavorite(boolean favorite) {
         isFavorite = favorite;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Recipe recipe = (Recipe) o;
+        return Objects.equals(id, recipe.id) &&
+                Objects.equals(titulo, recipe.titulo) &&
+                Objects.equals(descripcion, recipe.descripcion) &&
+                Objects.equals(imagen, recipe.imagen);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, titulo, descripcion, imagen);
     }
 }

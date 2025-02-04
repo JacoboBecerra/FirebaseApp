@@ -17,11 +17,11 @@ import com.example.myfirebaseapp.viewmodels.DashboardViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class DashboardActivity extends AppCompatActivity {
-
     private RecyclerView recyclerView;
     private RecipeAdapter adapter;
     private DashboardViewModel dashboardViewModel;
     private FirebaseAuth mAuth;
+    private LinearLayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +30,8 @@ public class DashboardActivity extends AppCompatActivity {
 
         // Inicializar RecyclerView
         recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
 
         // Inicializar ViewModel
         dashboardViewModel = new ViewModelProvider(this).get(DashboardViewModel.class);
@@ -41,12 +42,18 @@ public class DashboardActivity extends AppCompatActivity {
         // Observar los cambios en la lista de recetas
         dashboardViewModel.getRecipeList().observe(this, recipeList -> {
             if (recipeList != null && !recipeList.isEmpty()) {
-                adapter = new RecipeAdapter(
-                        recipeList,
-                        this::onRecipeClick,
-                        (recipe, isFavorite) -> dashboardViewModel.toggleFavorite(recipe, isFavorite)
-                );
-                recyclerView.setAdapter(adapter);
+                if (adapter == null) {
+                    adapter = new RecipeAdapter(
+                            recipeList,
+                            this::onRecipeClick,
+                            (recipe, isFavorite) -> {
+                                dashboardViewModel.toggleFavorite(recipe, isFavorite);
+                            }
+                    );
+                    recyclerView.setAdapter(adapter);
+                } else {
+                    adapter.updateRecipes(recipeList);
+                }
             } else {
                 Toast.makeText(DashboardActivity.this, "No se encontraron recetas", Toast.LENGTH_SHORT).show();
             }

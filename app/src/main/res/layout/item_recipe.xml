@@ -38,12 +38,15 @@
             <!-- Icono de favorito -->
             <ImageView
                 android:id="@+id/favoriteImageView"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_favorite_border"
-                android:padding="2dp"/>
+                android:padding="4dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless"/>
 
         </RelativeLayout>
 

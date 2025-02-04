@@ -46,41 +46,25 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     @Override
     public void onBindViewHolder(@NonNull RecipeViewHolder holder, int position) {
         Recipe recipe = recipeList.get(position);
-
-        holder.titleTextView.setText(recipe.getTitulo());
-        holder.descriptionTextView.setText(recipe.getDescripcion());
-
-        // Cargar la imagen de la receta
-        Picasso.get().load(recipe.getImagen()).into(holder.recipeImageView);
-
-        // Configurar el icono de favorito
-        holder.favoriteImageView.setImageResource(
-                recipe.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_favorite_border
-        );
-
-        // Click listener para el icono de favorito
-        holder.favoriteImageView.setOnClickListener(v -> {
-            boolean newFavoriteStatus = !recipe.isFavorite();
-            recipe.setFavorite(newFavoriteStatus);
-            holder.favoriteImageView.setImageResource(
-                    newFavoriteStatus ? R.drawable.ic_favorite : R.drawable.ic_favorite_border
-            );
-            if (onFavoriteClickListener != null) {
-                onFavoriteClickListener.onFavoriteClick(recipe, newFavoriteStatus);
-            }
-        });
-
-        // Click listener para el item completo
-        holder.itemView.setOnClickListener(v -> {
-            if (onRecipeClickListener != null) {
-                onRecipeClickListener.onRecipeClick(recipe);
-            }
-        });
+        holder.bind(recipe);
     }
 
     @Override
     public int getItemCount() {
         return recipeList.size();
+    }
+
+    public void updateRecipes(List<Recipe> newRecipes) {
+        for (Recipe newRecipe : newRecipes) {
+            for (int i = 0; i < recipeList.size(); i++) {
+                Recipe oldRecipe = recipeList.get(i);
+                if (oldRecipe.getId().equals(newRecipe.getId())) {
+                    oldRecipe.setFavorite(newRecipe.isFavorite());
+                    notifyItemChanged(i);
+                    break;
+                }
+            }
+        }
     }
 
     public class RecipeViewHolder extends RecyclerView.ViewHolder {
@@ -93,6 +77,28 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             descriptionTextView = itemView.findViewById(R.id.recipeDescriptionTextView);
             recipeImageView = itemView.findViewById(R.id.recipeImageView);
             favoriteImageView = itemView.findViewById(R.id.favoriteImageView);
+        }
+
+        public void bind(Recipe recipe) {
+            titleTextView.setText(recipe.getTitulo());
+            descriptionTextView.setText(recipe.getDescripcion());
+            Picasso.get().load(recipe.getImagen()).into(recipeImageView);
+
+            favoriteImageView.setImageResource(
+                    recipe.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_favorite_border
+            );
+
+            favoriteImageView.setOnClickListener(v -> {
+                if (onFavoriteClickListener != null) {
+                    onFavoriteClickListener.onFavoriteClick(recipe, !recipe.isFavorite());
+                }
+            });
+
+            itemView.setOnClickListener(v -> {
+                if (onRecipeClickListener != null) {
+                    onRecipeClickListener.onRecipeClick(recipe);
+                }
+            });
         }
     }
 }
