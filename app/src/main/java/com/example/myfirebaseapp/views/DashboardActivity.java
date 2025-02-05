@@ -86,6 +86,14 @@ public class DashboardActivity extends AppCompatActivity {
 
         Button themeButton = findViewById(R.id.themeToggleButton);
         themeButton.setOnClickListener(v -> toggleTheme());
+
+        // Añadir el botón para la pantalla de favoritos
+        Button favoritesButton = findViewById(R.id.favoritesButton);
+        favoritesButton.setOnClickListener(v -> {
+            // Intent para abrir la actividad de Favoritos
+            Intent intent = new Intent(DashboardActivity.this, FavouritesActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void performLogout() {

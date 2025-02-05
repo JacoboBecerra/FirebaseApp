@@ -12,6 +12,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,48 @@ public class DashboardRepository {
         mAuth = FirebaseAuth.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference("recetas");
         userFavoritesReference = FirebaseDatabase.getInstance().getReference("usuarios");
+    }
+
+    public LiveData<List<Recipe>> getFavouriteRecipes() {
+        MutableLiveData<List<Recipe>> favouriteRecipesLiveData = new MutableLiveData<>();
+        String userId = mAuth.getCurrentUser().getUid();
+
+        userFavoritesReference.child(userId).child("favoritos").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot favoritesSnapshot) {
+                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot recipesSnapshot) {
+                        List<Recipe> favouriteRecipes = new ArrayList<>();
+
+                        for (DataSnapshot recipeSnapshot : recipesSnapshot.getChildren()) {
+                            if (favoritesSnapshot.hasChild(recipeSnapshot.getKey())) {
+                                Recipe recipe = recipeSnapshot.getValue(Recipe.class);
+                                if (recipe != null) {
+                                    recipe.setId(recipeSnapshot.getKey());
+                                    recipe.setFavorite(true);
+                                    favouriteRecipes.add(recipe);
+                                }
+                            }
+                        }
+
+                        favouriteRecipesLiveData.setValue(favouriteRecipes);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        // Manejar error
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Manejar error
+            }
+        });
+
+        return favouriteRecipesLiveData;
     }
 
     public void toggleFavorite(String recipeId, boolean isFavorite) {

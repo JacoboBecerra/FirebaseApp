@@ -22,6 +22,7 @@
         <activity android:name=".views.RegisterActivity" />
         <activity android:name=".views.DashboardActivity" />
         <activity android:name=".views.DetailActivity" />
+        <activity android:name=".views.FavouritesActivity"/>
 
     </application>
 
