@@ -17,7 +17,9 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:scaleType="centerCrop"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@string/recipe_image_description"
+            android:focusable="true" />
 
         <!-- Contenedor para título y favorito -->
         <RelativeLayout
@@ -46,7 +48,8 @@
                 android:padding="4dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?attr/selectableItemBackgroundBorderless"/>
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/add_to_favorites" />
 
         </RelativeLayout>
 

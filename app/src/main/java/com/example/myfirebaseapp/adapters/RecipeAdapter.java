@@ -82,11 +82,21 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         public void bind(Recipe recipe) {
             titleTextView.setText(recipe.getTitulo());
             descriptionTextView.setText(recipe.getDescripcion());
+
+            // Cargar imagen con Picasso
             Picasso.get().load(recipe.getImagen()).into(recipeImageView);
 
-            favoriteImageView.setImageResource(
-                    recipe.isFavorite() ? R.drawable.ic_favorite : R.drawable.ic_favorite_border
-            );
+            // Asignar contentDescription dinámico para la imagen
+            recipeImageView.setContentDescription("Imagen de la receta: " + recipe.getTitulo());
+
+            // Cambiar el ícono de favorito y su descripción
+            if (recipe.isFavorite()) {
+                favoriteImageView.setImageResource(R.drawable.ic_favorite);
+                favoriteImageView.setContentDescription("Quitar " + recipe.getTitulo() + " de favoritos");
+            } else {
+                favoriteImageView.setImageResource(R.drawable.ic_favorite_border);
+                favoriteImageView.setContentDescription("Agregar " + recipe.getTitulo() + " a favoritos");
+            }
 
             favoriteImageView.setOnClickListener(v -> {
                 if (onFavoriteClickListener != null) {
