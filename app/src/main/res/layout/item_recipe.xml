@@ -60,7 +60,7 @@
             android:layout_height="wrap_content"
             android:text="Descripción de la receta"
             android:textSize="14sp"
-            android:textColor="#555555"/>
+            android:textColor="?attr/colorOnSurface" />
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

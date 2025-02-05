@@ -20,5 +20,17 @@
         android:layout_margin="16dp"
         android:layout_alignParentTop="true" />
 
+    <!-- En activity_dashboard.xml -->
+    <Button
+        android:id="@+id/themeToggleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cambiar tema"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_margin="16dp"
+        android:drawableStart="@drawable/ic_theme_toggle"
+        android:drawablePadding="8dp"/>
+
 </RelativeLayout>
 
