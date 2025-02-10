@@ -19,6 +19,7 @@ public class User {
         this.address = address;
     }
 
+    // Getters y setters sin cambios...
     public String getId() {
         return id;
     }
