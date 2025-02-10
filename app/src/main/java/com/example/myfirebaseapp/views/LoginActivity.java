@@ -19,11 +19,14 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Obtén el ViewModel
         loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
 
+        // Obtén las vistas del correo y la contraseña
         EditText emailEditText = findViewById(R.id.emailEditText);
         EditText passwordEditText = findViewById(R.id.passwordEditText);
 
+        // Configura el botón de inicio de sesión
         findViewById(R.id.loginButton).setOnClickListener(v -> {
             String email = emailEditText.getText().toString();
             String password = passwordEditText.getText().toString();
@@ -41,9 +44,11 @@ public class LoginActivity extends AppCompatActivity {
         // Observar el estado de inicio de sesión
         loginViewModel.getLoginStatus().observe(this, isSuccess -> {
             if (isSuccess) {
-                // Si el inicio de sesión fue exitoso, mostrar mensaje y redirigir a DashboardActivity
+                // Si el inicio de sesión fue exitoso, mostrar mensaje y redirigir a MainActivity
                 Toast.makeText(LoginActivity.this, "Inicio de sesión exitoso.", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+
+                // Redirigir a MainActivity en lugar de un fragmento
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 finish();  // Finalizar la actividad de inicio de sesión para que no se pueda volver atrás

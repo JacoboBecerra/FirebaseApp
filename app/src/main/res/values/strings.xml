@@ -3,4 +3,6 @@
     <string name="recipe_image_description">Imagen de la receta</string>
     <string name="add_to_favorites">Agregar a favoritos</string>
     <string name="remove_from_favorites">Quitar de favoritos</string>
+    <string name="navigation_drawer_open">Abrir menú</string>
+    <string name="navigation_drawer_close">Cerrar menú</string>
 </resources>
