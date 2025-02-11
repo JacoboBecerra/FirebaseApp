@@ -1,5 +1,6 @@
 package com.example.myfirebaseapp.views;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -14,18 +15,21 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.myfirebaseapp.R;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private ActionBarDrawerToggle actionBarDrawerToggle;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mAuth = FirebaseAuth.getInstance();
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
 
@@ -60,6 +64,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragment = new FavouritesFragment();
         } else if (itemId == R.id.nav_profile) {
             fragment = new ProfileFragment();
+        } else if (itemId == R.id.nav_logout) {
+            // Cerrar sesión
+            mAuth.signOut();
+            // Iniciar LoginActivity
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+            return true;
         }
 
         if (fragment != null) {
